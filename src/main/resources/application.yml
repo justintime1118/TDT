@@ -1,0 +1,27 @@
+spring:
+  application:
+    name: tdt
+  output:
+    ansi:
+    enabled: always #터미널 output 컬러 설정
+  profiles:
+    active: local #spring 프로필 설정
+  jpa:
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.MySQLDialect
+        ddl-auto: create #개발용으로 사용
+  datasource:
+    url: jdbc:h2:mem:testdb #;MODE=MySQL
+  h2:
+    console:
+      enabled: true
+
+#JPA log
+logging:
+  level:
+    org:
+      hibernate:
+        SQL: DEBUG
+        jdbc:
+          bind: TRACE
