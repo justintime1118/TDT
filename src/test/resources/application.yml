@@ -1,0 +1,21 @@
+spring:
+  application:
+    name: tdt
+  output:
+    ansi:
+      enabled: always #터미널 output 컬러 설정
+  profiles:
+    active: test #spring 프로필 설정
+  jpa:
+    properties:
+      hibernate:
+        ddl-auto: create #개발용으로 사용
+
+#JPA log
+logging:
+  level:
+    org:
+      hibernate:
+        SQL: DEBUG
+        jdbc:
+          bind: TRACE
