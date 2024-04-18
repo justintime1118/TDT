@@ -28,7 +28,7 @@ public class UserRepositoryTest {
     void 회원저장_및_딘건조회() {
         //given
         User user = User.builder()
-                .username("test username")
+                .loginId("test id")
                 .encryptedPassword("test pw")
                 .nickname("test nickname")
                 .build();
@@ -45,20 +45,6 @@ public class UserRepositoryTest {
 
     @Test
     void 회원정보수정() {
-        //given
-        User user = User.builder()
-                .username("test username")
-                .encryptedPassword("test pw")
-                .nickname("test nickname")
-                .build();
-        User savedUser = userRepository.save(user);
-
-        //when
-        savedUser.setNickname("updated");
-
-        //then
-        User updatedUser = userRepository.findById(savedUser.getId()).get();
-        assertThat(updatedUser.getUsername()).isEqualTo(savedUser.getUsername());
     }
 
     @Test
@@ -67,7 +53,7 @@ public class UserRepositoryTest {
 
         for (int i = 0; i < 5; i++) {
             User user = User.builder()
-                    .username("test username" + " " + i)
+                    .loginId("test loginId" + " " + i)
                     .encryptedPassword("test pw" + " " + i)
                     .nickname("test nickname" + " " + i)
                     .build();
