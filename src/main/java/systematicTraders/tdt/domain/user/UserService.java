@@ -2,6 +2,7 @@ package systematicTraders.tdt.domain.user;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.mindrot.jbcrypt.BCrypt;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import systematicTraders.tdt.domain.user.dtos.UserRegisterDto;
@@ -10,17 +11,32 @@ import systematicTraders.tdt.domain.user.dtos.UserRegisterDto;
 @Service
 @RequiredArgsConstructor
 public class UserService {
+
     private final UserRepository userRepository;
 
+    /**
+     * 회원가입
+     */
     @Transactional
-    public UserRegisterDto register(UserRegisterDto dto) {
-        User user = dto.toEntity();
-        String password = dto.getPassword();
+    public Long register(UserRegisterDto dto) {
+        String encryptedPassword = BCrypt.hashpw(dto.getPassword(), BCrypt.gensalt());
+        User newUser = User.builder()
+                .loginId(dto.getLoginId())
+                .encryptedPassword(encryptedPassword)
+                .nickname(dto.getNickname())
+                .build();
 
-        //패스워드 암호화
-        user.setEncryptedPassword("암호화된 패스워드");
-        userRepository.save(user);
+        User savedUser = userRepository.save(newUser);
 
-        return dto;
+        return savedUser.getId();
+    }
+
+    public boolean checkPassword(String plainPassword, String hashedPassword) {
+        return BCrypt.checkpw(plainPassword, hashedPassword);
+    }
+
+    public Long delete(Long userId) {
+        userRepository.deleteById(userId);
+        return userId;
     }
 }

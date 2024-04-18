@@ -3,28 +3,21 @@ package systematicTraders.tdt.domain.user.dtos;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 import systematicTraders.tdt.domain.user.User;
 
-@Getter
+@Getter @Setter
 @NoArgsConstructor
 public class UserRegisterDto {
 
-    private String username;
+    private String loginId;
     private String password;
     private String nickname;
 
     @Builder
-    public UserRegisterDto(String username, String password, String nickname) {
-        this.username = username;
+    public UserRegisterDto(String loginId, String password, String nickname) {
+        this.loginId = loginId;
         this.password = password;
         this.nickname = nickname;
-    }
-
-    public User toEntity() {
-        return User.builder()
-                .username(username)
-                .encryptedPassword(password)
-                .nickname(nickname)
-                .build();
     }
 }

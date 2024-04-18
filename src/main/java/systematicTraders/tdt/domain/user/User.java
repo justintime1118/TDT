@@ -5,24 +5,24 @@ import lombok.*;
 import systematicTraders.tdt.domain.BaseTimeEntity;
 
 @Getter
-@Setter
 @NoArgsConstructor
 @Entity
-@Table(name = "TDT_USERS")
+@Table(name = "users")
 public class User extends BaseTimeEntity {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    private String username;
+    private String loginId;
     private String encryptedPassword;
     private String nickname;
 //    private String profilePhoto;
 
+
     @Builder
-    public User(String username, String encryptedPassword, String nickname) {
-        this.username = username;
+    public User(Long id, String loginId, String encryptedPassword, String nickname) {
+        this.id = id;
+        this.loginId = loginId;
         this.encryptedPassword = encryptedPassword;
         this.nickname = nickname;
     }
