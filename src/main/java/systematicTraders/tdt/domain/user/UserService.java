@@ -18,7 +18,7 @@ public class UserService {
      * 회원가입
      */
     @Transactional
-    public Long register(UserRegisterDto dto) {
+    public User register(UserRegisterDto dto) {
         String encryptedPassword = BCrypt.hashpw(dto.getPassword(), BCrypt.gensalt());
         User newUser = User.builder()
                 .loginId(dto.getLoginId())
@@ -26,15 +26,12 @@ public class UserService {
                 .nickname(dto.getNickname())
                 .build();
 
-        User savedUser = userRepository.save(newUser);
-
-        return savedUser.getId();
+        return userRepository.save(newUser);
     }
 
-    public boolean checkPassword(String plainPassword, String hashedPassword) {
-        return BCrypt.checkpw(plainPassword, hashedPassword);
-    }
 
+
+    @Transactional
     public Long delete(Long userId) {
         userRepository.deleteById(userId);
         return userId;
