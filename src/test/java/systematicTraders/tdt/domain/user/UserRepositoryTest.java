@@ -19,13 +19,9 @@ public class UserRepositoryTest {
     @Autowired
     private UserRepository userRepository;
 
-    @AfterEach
-    void clear() {
-        userRepository.deleteAll();
-    }
 
     @Test
-    void 회원저장_및_딘건조회() {
+    void save_findById() {
         //given
         User user = User.builder()
                 .loginId("test id")
@@ -44,11 +40,27 @@ public class UserRepositoryTest {
     }
 
     @Test
-    void 회원정보수정() {
+    void findByLoginId() {
+        //given
+        User user = User.builder()
+                .loginId("testId")
+                .encryptedPassword("testPw")
+                .nickname("testNickname")
+                .build();
+
+        //when
+        User savedUser = userRepository.save(user);
+        User validUser = userRepository.findByLoginId(savedUser.getLoginId());
+        User invalidUser = userRepository.findByLoginId("존재하지않는ID");
+
+        //then
+        assertThat(validUser).isSameAs(savedUser);
+        assertThat(invalidUser).isNull();
+
     }
 
     @Test
-    void 다건조회() {
+    void findAll() {
         //given
 
         for (int i = 0; i < 5; i++) {
