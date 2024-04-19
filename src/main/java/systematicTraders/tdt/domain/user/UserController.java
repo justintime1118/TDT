@@ -2,6 +2,8 @@ package systematicTraders.tdt.domain.user;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.validation.BindingResult;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import systematicTraders.tdt.domain.user.dtos.UserRegisterDto;
 
@@ -12,13 +14,15 @@ import systematicTraders.tdt.domain.user.dtos.UserRegisterDto;
 public class UserController {
 
     private final UserService userService;
-    private final UserRepository userRepository;
 
     /**
      * 회원가입
      */
     @PostMapping
-    public Long register(@RequestBody UserRegisterDto dto) {
+    public Object register(@Validated @RequestBody UserRegisterDto dto, BindingResult bindingResult) {
+        if (bindingResult.hasErrors()) {
+            return bindingResult.getAllErrors();
+        }
         return userService.register(dto);
     }
 
@@ -30,7 +34,7 @@ public class UserController {
      * 회원탈퇴
      */
     @PostMapping("/{userId}")
-    public Long delete(@RequestBody UserRegisterDto dto, @PathVariable("userId") Long userId) {
+    public Long delete(@PathVariable("userId") Long userId) {
         return userService.delete(userId);
     }
 
