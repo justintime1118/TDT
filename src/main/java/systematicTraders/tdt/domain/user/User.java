@@ -4,6 +4,7 @@ import jakarta.persistence.*;
 import lombok.*;
 import org.mindrot.jbcrypt.BCrypt;
 import systematicTraders.tdt.domain.BaseTimeEntity;
+import systematicTraders.tdt.domain.user.dtos.UserUpdateDto;
 
 @Getter
 @NoArgsConstructor
@@ -34,5 +35,12 @@ public class User extends BaseTimeEntity {
 
     public static boolean checkPassword(String plainPassword, String hashedPassword) {
         return BCrypt.checkpw(plainPassword, hashedPassword);
+    }
+
+    public void update(UserUpdateDto dto) {
+        String encryptedPassword = BCrypt.hashpw(dto.getPassword(), BCrypt.gensalt());
+        this.encryptedPassword = encryptedPassword;
+
+        this.nickname = dto.getNickname();
     }
 }

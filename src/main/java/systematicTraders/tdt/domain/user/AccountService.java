@@ -6,6 +6,9 @@ import org.mindrot.jbcrypt.BCrypt;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import systematicTraders.tdt.domain.user.dtos.UserRegisterDto;
+import systematicTraders.tdt.domain.user.dtos.UserUpdateDto;
+
+import java.util.Optional;
 
 @Slf4j
 @Service
@@ -16,6 +19,8 @@ public class AccountService {
 
     /**
      * 회원가입
+     * @param dto
+     * @return 가입된 User
      */
     @Transactional
     public User register(UserRegisterDto dto) {
@@ -29,11 +34,35 @@ public class AccountService {
         return userRepository.save(newUser);
     }
 
-
-
+    /**
+     * 회원정보변경
+     *
+     * @param id
+     * @param dto
+     * @return 수정된 User
+     */
     @Transactional
-    public Long delete(Long userId) {
-        userRepository.deleteById(userId);
-        return userId;
+    public User update(Long id, UserUpdateDto dto) {
+        Optional<User> result = userRepository.findById(id);
+        if (result.isEmpty()) {
+            return null;
+        }
+
+        User foundUser = result.get();
+        foundUser.update(dto);
+        return foundUser;
     }
+
+
+    /**
+     * 회원탈퇴
+     * @param userId
+     * @return 삭제된 userId
+     */
+    @Transactional
+    public void delete(Long userId) {
+        userRepository.deleteById(userId);
+    }
+
+
 }
