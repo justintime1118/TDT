@@ -37,7 +37,12 @@ public class AuthController {
 
     @PostMapping("/logout")
     public String logout(HttpServletRequest request) {
-        authService.logout(request.getSession(false));
+        HttpSession session = request.getSession(false);
+
+        if (session != null) {
+            session.invalidate();
+        }
+
         return "session terminated";
     }
 }

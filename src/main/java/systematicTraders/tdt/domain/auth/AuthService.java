@@ -28,9 +28,4 @@ public class AuthService {
         return true;
     }
 
-    public void logout(HttpSession session) {
-        if (session != null) {
-            session.invalidate();
-        }
-    }
 }
