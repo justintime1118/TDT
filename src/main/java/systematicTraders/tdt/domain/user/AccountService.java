@@ -10,7 +10,7 @@ import systematicTraders.tdt.domain.user.dtos.UserRegisterDto;
 @Slf4j
 @Service
 @RequiredArgsConstructor
-public class UserService {
+public class AccountService {
 
     private final UserRepository userRepository;
 

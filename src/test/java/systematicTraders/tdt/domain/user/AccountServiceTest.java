@@ -1,7 +1,6 @@
 package systematicTraders.tdt.domain.user;
 
 import lombok.extern.slf4j.Slf4j;
-import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -9,16 +8,15 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.transaction.annotation.Transactional;
 import systematicTraders.tdt.domain.user.dtos.UserRegisterDto;
 
-import static org.assertj.core.api.Assertions.*;
-import static org.junit.jupiter.api.Assertions.*;
+import static org.assertj.core.api.Assertions.assertThat;
 
 @Slf4j
 @SpringBootTest
 @Transactional
-class UserServiceTest {
+class AccountServiceTest {
 
     @Autowired
-    UserService userService;
+    AccountService accountService;
 
     @Autowired
     private UserRepository userRepository;
@@ -34,10 +32,10 @@ class UserServiceTest {
         UserRegisterDto userRegisterDto = new UserRegisterDto("userA", "testPassword", "testNickname");
 
         //when
-        Long newUserId = userService.register(userRegisterDto);
+        User newUser = accountService.register(userRegisterDto);
 
         //then
-        User savedUser = userRepository.findById(newUserId).get();
+        User savedUser = userRepository.findById(newUser.getId()).get();
         log.info("encryptedPassword={}", savedUser.getEncryptedPassword());
         assertThat(savedUser.getEncryptedPassword()).isNotEqualTo(userRegisterDto.getPassword());
     }
@@ -46,12 +44,12 @@ class UserServiceTest {
     void 회원탈퇴() {
         //given
         UserRegisterDto userRegisterDto = new UserRegisterDto("userA", "testPassword", "testNickname");
-        Long userId = userService.register(userRegisterDto);
+        User user = accountService.register(userRegisterDto);
 
         //when
-        userService.delete(userId);
+        accountService.delete(user.getId());
 
         //then
-        assertThat(userRepository.findById(userId)).isEmpty();
+        assertThat(userRepository.findById(user.getId())).isEmpty();
     }
 }
