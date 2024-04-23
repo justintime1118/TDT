@@ -1,5 +1,7 @@
 package systematicTraders.tdt.web.controllers;
 
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.validation.BindingResult;
@@ -30,9 +32,16 @@ public class AccountController {
     /**
      * 회원탈퇴
      */
-    @PostMapping("/{userId}")
-    public Long delete(@PathVariable("userId") Long userId) {
-        return accountService.delete(userId);
+    @DeleteMapping("/{loginId}")
+    public Object delete(HttpServletRequest request, @PathVariable("loginId") Long loginId) {
+        HttpSession session = request.getSession(false);
+        if (session == null) {
+            return false;
+        }
+        session.invalidate();
+
+        return accountService.delete(loginId);
+
     }
 
 }
