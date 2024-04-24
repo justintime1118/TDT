@@ -12,6 +12,7 @@ import systematicTraders.tdt.domain.user.AccountService;
 import systematicTraders.tdt.domain.user.User;
 import systematicTraders.tdt.domain.user.dtos.UserRegisterDto;
 import systematicTraders.tdt.domain.user.dtos.UserUpdateDto;
+import systematicTraders.tdt.web.argumentResolvers.Login;
 
 @Slf4j
 @RequiredArgsConstructor
@@ -24,7 +25,7 @@ public class AccountController {
     /**
      * 회원가입
      */
-    @PostMapping
+    @PostMapping("/register")
     public Object register(@Valid @RequestBody UserRegisterDto dto, BindingResult bindingResult) {
         if (bindingResult.hasErrors()) {
             return bindingResult.getAllErrors();
@@ -34,10 +35,10 @@ public class AccountController {
 
     /**
      * 회원정보수정
-     * TODO 여기에 @SessionAttribute랑 인터셉터 등등을 활용해보자
      */
-    @PatchMapping
-    public Object update(@SessionAttribute(name = SessionConst.LOGIN_USER) User user,
+
+    @PatchMapping("/update")
+    public Object update(@Login User user,
                          @Valid @RequestBody UserUpdateDto dto, BindingResult bindingResult) {
         if (user == null) {
             bindingResult.reject("unauthenticatedUser");
@@ -54,7 +55,7 @@ public class AccountController {
     /**
      * 회원탈퇴
      */
-    @DeleteMapping
+    @DeleteMapping("/delete")
     public void delete(HttpServletRequest request) {
         HttpSession session = request.getSession(false);
         if (session == null) {
