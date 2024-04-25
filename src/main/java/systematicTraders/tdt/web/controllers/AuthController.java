@@ -2,16 +2,17 @@ package systematicTraders.tdt.web.controllers;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.validation.BindingResult;
-import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import systematicTraders.tdt.domain.auth.LoginDto;
 import systematicTraders.tdt.domain.auth.AuthService;
+import systematicTraders.tdt.exception.customExceptions.InvalidLoginInfoException;
+import systematicTraders.tdt.exception.customExceptions.InvalidValueException;
+import systematicTraders.tdt.exception.customExceptions.NotExistingSessionExcepion;
+import systematicTraders.tdt.web.ApiResponse;
 
 @Slf4j
 @RequiredArgsConstructor
@@ -22,27 +23,27 @@ public class AuthController {
     private final AuthService authService;
 
     @PostMapping("/login")
-    public Object login(@Validated @RequestBody LoginDto dto, BindingResult bindingResult, HttpServletRequest request) {
+    public ApiResponse login(@Valid @RequestBody LoginDto dto, BindingResult bindingResult, HttpServletRequest request) {
         if (bindingResult.hasErrors()) {
-            return bindingResult.getAllErrors();
+            throw new InvalidValueException();
         }
         boolean isValidUser = authService.login(dto.getLoginId(), dto.getPassword(), request.getSession());
         if (!isValidUser) {
-            bindingResult.reject("loginFail", "아이디 또는 비밀번호가 맞지 않습니다");
-            return bindingResult.getAllErrors();
+            throw new InvalidLoginInfoException();
         }
 
-        return true;
+        return ApiResponse.success(isValidUser);
     }
 
     @PostMapping("/logout")
-    public String logout(HttpServletRequest request) {
-        HttpSession session = request.getSession(false);
+    public ApiResponse logout(HttpServletRequest request) {
 
-        if (session != null) {
-            session.invalidate();
+        HttpSession session = request.getSession(false);
+        if (session == null) {
+            throw new NotExistingSessionExcepion();
         }
 
-        return "session terminated";
+        session.invalidate();
+        return ApiResponse.success(true);
     }
 }

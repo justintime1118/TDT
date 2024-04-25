@@ -15,6 +15,7 @@ public class UserUpdateDto {
     @Length(min = 8, max = 24, message = "비밀번호는 8~24자로 입력해주세요")
     private String password;
 
+    @Length(max = 20, message = "닉네임은 최대 20자입니다.")
     private String nickname;
 
     @Builder

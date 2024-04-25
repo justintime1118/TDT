@@ -8,63 +8,67 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import systematicTraders.tdt.domain.auth.SessionConst;
-import systematicTraders.tdt.domain.user.AccountService;
+import systematicTraders.tdt.domain.user.UserService;
 import systematicTraders.tdt.domain.user.User;
 import systematicTraders.tdt.domain.user.dtos.UserRegisterDto;
 import systematicTraders.tdt.domain.user.dtos.UserUpdateDto;
-import systematicTraders.tdt.web.argumentResolvers.Login;
+import systematicTraders.tdt.exception.customExceptions.InvalidValueException;
+import systematicTraders.tdt.exception.customExceptions.NotAuthenticatedException;
+import systematicTraders.tdt.web.ApiResponse;
+import systematicTraders.tdt.argumentResolvers.Login;
+
+import static systematicTraders.tdt.web.ApiResponse.*;
 
 @Slf4j
 @RequiredArgsConstructor
-@RequestMapping("/accounts")
+@RequestMapping("/users")
 @RestController
-public class AccountController {
+public class UserController {
 
-    private final AccountService accountService;
+    private final UserService userService;
 
     /**
      * 회원가입
      */
     @PostMapping("/register")
-    public Object register(@Valid @RequestBody UserRegisterDto dto, BindingResult bindingResult) {
+    public ApiResponse register(@Valid @RequestBody UserRegisterDto dto, BindingResult bindingResult) {
         if (bindingResult.hasErrors()) {
-            return bindingResult.getAllErrors();
+            throw new InvalidValueException();
         }
-        return accountService.register(dto);
+        Long newUserId = userService.register(dto);
+        return success(newUserId);
     }
 
     /**
      * 회원정보수정
      */
-
     @PatchMapping("/update")
-    public Object update(@Login User user,
+    public ApiResponse update(@Login User user,
                          @Valid @RequestBody UserUpdateDto dto, BindingResult bindingResult) {
         if (user == null) {
-            bindingResult.reject("unauthenticatedUser");
-            return bindingResult.getAllErrors();
+            throw new NotAuthenticatedException();
         }
 
         if (bindingResult.hasErrors()) {
-            return bindingResult.getAllErrors();
+            throw new InvalidValueException();
         }
 
-        return accountService.update(user.getId(), dto);
+        return success(userService.update(user.getId(), dto));
     }
 
     /**
      * 회원탈퇴
      */
     @DeleteMapping("/delete")
-    public void delete(HttpServletRequest request) {
+    public ApiResponse delete(HttpServletRequest request) {
         HttpSession session = request.getSession(false);
         if (session == null) {
-            return;
+            throw new NotAuthenticatedException();
         }
         User user = (User) session.getAttribute(SessionConst.LOGIN_USER);
         session.invalidate();
 
-        accountService.delete(user.getId());
-    }
+        return success(userService.delete(user.getId()));
 
+    }
 }

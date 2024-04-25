@@ -4,9 +4,9 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.web.method.support.HandlerMethodArgumentResolver;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
-import systematicTraders.tdt.web.argumentResolvers.LoginUserArgumentResolver;
-import systematicTraders.tdt.web.interceptors.LogInterceptor;
-import systematicTraders.tdt.web.interceptors.LoginCheckInterceptor;
+import systematicTraders.tdt.argumentResolvers.LoginUserArgumentResolver;
+import systematicTraders.tdt.interceptors.LogInterceptor;
+import systematicTraders.tdt.interceptors.LoginCheckInterceptor;
 
 import java.util.List;
 
@@ -25,7 +25,7 @@ public class WebConfig implements WebMvcConfigurer {
                 .order(++order)
                 .addPathPatterns("/**")
                 .excludePathPatterns(
-                        "/", "/accounts/register", "/auth/login", "/auth/logout",
+                        "/", "/users/register", "/auth/login", "/auth/logout",
                         "/css/**", "/*.ico", "/error/**"
                 );
     }

@@ -1,46 +1,21 @@
 package systematicTraders.tdt.domain.user;
 
-import lombok.extern.slf4j.Slf4j;
-import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.transaction.annotation.Transactional;
+import systematicTraders.tdt.domain.user.dtos.UserUpdateDto;
 
-import java.util.List;
+import static org.assertj.core.api.Assertions.assertThat;
 
-import static org.assertj.core.api.Assertions.*;
-
-@Slf4j
 @SpringBootTest
 @Transactional
-public class UserRepositoryTest {
+class UserRepositoryTest {
 
-    @Autowired
-    private UserRepository userRepository;
-
+    @Autowired UserRepository userRepository;
 
     @Test
-    void save_findById() {
-        //given
-        User user = User.builder()
-                .loginId("test id")
-                .encryptedPassword("test pw")
-                .nickname("test nickname")
-                .build();
-
-        //when
-        User savedUser = userRepository.save(user);
-        User foundUser = userRepository.findById(savedUser.getId()).get();
-
-        //then
-        assertThat(foundUser).isSameAs(savedUser);
-        log.info("createdAt: {}", foundUser.getCreatedDate());
-
-    }
-
-    @Test
-    void findByLoginId() {
+    void saveAndFind() {
         //given
         User user = User.builder()
                 .loginId("testId")
@@ -50,32 +25,52 @@ public class UserRepositoryTest {
 
         //when
         User savedUser = userRepository.save(user);
-        User validUser = userRepository.findByLoginId(savedUser.getLoginId());
-        User invalidUser = userRepository.findByLoginId("존재하지않는ID");
+        User foundUser = userRepository.findByLoginId("testId");
 
         //then
-        assertThat(validUser).isSameAs(savedUser);
-        assertThat(invalidUser).isNull();
+        assertThat(foundUser).isSameAs(savedUser);
 
     }
 
     @Test
-    void findAll() {
+    void update() {
         //given
+        User user = User.builder()
+                .loginId("testId")
+                .encryptedPassword("testPw")
+                .nickname("testNickname")
+                .build();
+        userRepository.save(user);
 
-        for (int i = 0; i < 5; i++) {
-            User user = User.builder()
-                    .loginId("test loginId" + " " + i)
-                    .encryptedPassword("test pw" + " " + i)
-                    .nickname("test nickname" + " " + i)
-                    .build();
-            userRepository.save(user);
-        }
 
         //when
-        List<User> users = userRepository.findAll();
+        user.update(UserUpdateDto.builder()
+                    .nickname("updatedNickname")
+                    .build()
+        );
+
+        User foundUser = userRepository.findByLoginId("testId");
 
         //then
-        assertThat(users.size()).isEqualTo(5);
+        assertThat(foundUser.getNickname()).isEqualTo(user.getNickname());
+    }
+
+    @Test
+    void delete() {
+        //given
+        User user = User.builder()
+                .loginId("testId")
+                .encryptedPassword("testPw")
+                .nickname("testNickname")
+                .build();
+        userRepository.save(user);
+
+        //when
+        userRepository.deleteById(user.getId());
+        User deletedUser = userRepository.findByLoginId("testId");
+
+        //then
+        assertThat(deletedUser).isNull();
+
     }
 }

@@ -2,6 +2,7 @@ package systematicTraders.tdt.domain.user;
 
 import jakarta.persistence.*;
 import lombok.*;
+import org.hibernate.validator.constraints.Length;
 import org.mindrot.jbcrypt.BCrypt;
 import systematicTraders.tdt.domain.BaseTimeEntity;
 import systematicTraders.tdt.domain.user.dtos.UserUpdateDto;
@@ -21,6 +22,7 @@ public class User extends BaseTimeEntity {
     @Column(nullable = false)
     private String encryptedPassword;
 
+    @Length(max = 20)
     private String nickname;
 //    private String profilePhoto;
 

@@ -1,4 +1,4 @@
-package systematicTraders.tdt.web.argumentResolvers;
+package systematicTraders.tdt.argumentResolvers;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;

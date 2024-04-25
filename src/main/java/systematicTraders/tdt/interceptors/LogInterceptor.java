@@ -1,4 +1,4 @@
-package systematicTraders.tdt.web.interceptors;
+package systematicTraders.tdt.interceptors;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -15,27 +15,23 @@ public class LogInterceptor implements HandlerInterceptor {
     public static final String LOG_ID = "logId";
 
     @Override
-    public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
+    public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) {
         String requestURI = request.getRequestURI();
 
         String uuid = UUID.randomUUID().toString();
         request.setAttribute(LOG_ID, uuid);
-
-        if (handler instanceof HandlerMethod) {
-            HandlerMethod hm = (HandlerMethod) handler; //호출할 컨트롤러 메서드의 모든 정보가 포함되어 있다.
-        }
 
         log.info("REQUEST [{}][{}][{}]", uuid, requestURI, handler);
         return true; //false 진행X
     }
 
     @Override
-    public void postHandle(HttpServletRequest request, HttpServletResponse response, Object handler, ModelAndView modelAndView) throws Exception {
+    public void postHandle(HttpServletRequest request, HttpServletResponse response, Object handler, ModelAndView modelAndView) {
         log.info("postHandle [{}]", modelAndView);
     }
 
     @Override
-    public void afterCompletion(HttpServletRequest request, HttpServletResponse response, Object handler, Exception ex) throws Exception {
+    public void afterCompletion(HttpServletRequest request, HttpServletResponse response, Object handler, Exception ex) {
         String requestURI = request.getRequestURI();
         String logId = (String) request.getAttribute(LOG_ID);
 

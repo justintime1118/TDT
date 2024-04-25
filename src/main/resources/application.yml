@@ -16,6 +16,15 @@ spring:
     console:
       enabled: true
 
+server:
+  servlet:
+    session:
+      tracking-modes: cookie #JSESSIONID의 URL 전달 방식 끄기
+      timeout: 1800 #1800초(30분)
+  error:
+    whitelabel:
+      enabled: false
+
 #JPA log
 logging:
   level:

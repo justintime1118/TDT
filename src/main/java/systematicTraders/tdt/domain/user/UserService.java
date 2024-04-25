@@ -7,23 +7,29 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import systematicTraders.tdt.domain.user.dtos.UserRegisterDto;
 import systematicTraders.tdt.domain.user.dtos.UserUpdateDto;
+import systematicTraders.tdt.exception.customExceptions.DuplicateLoginIdException;
 
 import java.util.Optional;
 
 @Slf4j
 @Service
 @RequiredArgsConstructor
-public class AccountService {
+public class UserService {
 
     private final UserRepository userRepository;
 
     /**
      * 회원가입
-     * @param dto
-     * @return 가입된 User
+     * @return 가입된 User의 id
      */
     @Transactional
-    public User register(UserRegisterDto dto) {
+    public Long register(UserRegisterDto dto) {
+        //loginId 중복체크
+        User preExisitingUser = userRepository.findByLoginId(dto.getLoginId());
+        if (preExisitingUser != null) {
+            throw new DuplicateLoginIdException();
+        }
+
         String encryptedPassword = BCrypt.hashpw(dto.getPassword(), BCrypt.gensalt());
         User newUser = User.builder()
                 .loginId(dto.getLoginId())
@@ -31,18 +37,17 @@ public class AccountService {
                 .nickname(dto.getNickname())
                 .build();
 
-        return userRepository.save(newUser);
+        userRepository.save(newUser);
+
+        return newUser.getId();
     }
 
     /**
      * 회원정보변경
-     *
-     * @param id
-     * @param dto
      * @return 수정된 User
      */
     @Transactional
-    public User update(Long id, UserUpdateDto dto) {
+    public Long update(Long id, UserUpdateDto dto) {
         Optional<User> result = userRepository.findById(id);
         if (result.isEmpty()) {
             return null;
@@ -50,18 +55,18 @@ public class AccountService {
 
         User foundUser = result.get();
         foundUser.update(dto);
-        return foundUser;
+        return foundUser.getId();
     }
 
 
     /**
      * 회원탈퇴
-     * @param userId
      * @return 삭제된 userId
      */
     @Transactional
-    public void delete(Long userId) {
+    public Long delete(Long userId) {
         userRepository.deleteById(userId);
+        return userId;
     }
 
 
