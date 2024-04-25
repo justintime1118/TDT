@@ -1,4 +1,4 @@
-package systematicTraders.tdt.domain.login;
+package systematicTraders.tdt.domain.auth;
 
 import jakarta.validation.constraints.NotBlank;
 import lombok.Builder;
